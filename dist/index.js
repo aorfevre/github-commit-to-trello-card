@@ -8762,6 +8762,7 @@ async function getCardOnBoard(board, message) {
   console.log("getCardOnBoard", card);
   if (card && card.length > 0) {
     let url = `https://trello.com/1/boards/${board}/cards/${card}`;
+    console.log("url", url);
     return await axios__WEBPACK_IMPORTED_MODULE_0__.get(url, {
         params: {
           key: trelloApiKey,
