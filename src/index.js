@@ -6,9 +6,10 @@ const { context = {} } = github;
 const { pull_request, head_commit } = context.payload;
 
 const regexPullRequest = /Merge pull request \#\d+ from/g;
-const trelloApiKey = core.getInput("trello-api-key", { required: true });
-const trelloAuthToken = core.getInput("trello-auth-token", { required: true });
-const trelloBoardId = core.getInput("trello-board-id", { required: true });
+const trelloApiKey = "f9a66a680f73c64a84a369ff855bc65b";
+const trelloAuthToken =
+  "6718ae5afbf8eaf4409bffff8eabd0a7caa1b117294b32695358ab67581347a2";
+const trelloBoardId = "6155f330c33c1487e8e44b88";
 const trelloCardAction = core.getInput("trello-card-action", {
   required: true,
 });
