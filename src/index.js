@@ -165,7 +165,7 @@ async function handleHeadCommit(data) {
   let card = await getCardOnBoard(trelloBoardId, message);
   if (card && card.length > 0) {
     if (trelloCardAction && trelloCardAction.toLowerCase() == "attachment") {
-      console.log("Add Attachment");
+      console.log("Add Attachment -> New");
       await addAttachmentToCard(card, url);
     } else if (
       trelloCardAction &&
