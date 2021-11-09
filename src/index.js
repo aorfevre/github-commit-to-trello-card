@@ -25,7 +25,7 @@ const trelloListNamePullRequestClosed = core.getInput(
 );
 
 function getCardNumber(message) {
-  console.log(`getCardNumber(${message})`);
+  console.log(`getCardNumber`, message);
   let ids =
     message && message.length > 0
       ? message.replace(regexPullRequest, "").match(/\#\d+/g)

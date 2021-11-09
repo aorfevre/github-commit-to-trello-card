@@ -8748,7 +8748,7 @@ const trelloListNamePullRequestClosed = _actions_core__WEBPACK_IMPORTED_MODULE_1
 );
 
 function getCardNumber(message) {
-  console.log(`getCardNumber(${message})`);
+  console.log(`getCardNumber`, message);
   let ids =
     message && message.length > 0
       ? message.replace(regexPullRequest, "").match(/\#\d+/g)
