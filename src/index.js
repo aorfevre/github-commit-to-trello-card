@@ -9,8 +9,10 @@ const regexPullRequest = /Merge pull request \#\d+ from/g;
 const trelloApiKey = core.getInput("trello-api-key", { required: true });
 const trelloAuthToken = core.getInput("trello-auth-token", { required: true });
 const trelloBoardId = core.getInput("trello-board-id", { required: true });
-const githubRef = core.getInput("trello-github-branch", { required: true });
-console.log("GITHUB REF", githubRef);
+const trelloGithubBranch = core.getInput("trello-github-branch", {
+  required: true,
+});
+console.log("trelloGithubBranch", trelloGithubBranch);
 const trelloCardAction = core.getInput("trello-card-action", {
   required: true,
 });
@@ -202,16 +204,16 @@ async function handleHeadCommit(data) {
     } else if (
       trelloListNameCommit &&
       trelloListNameCommit.length > 0 &&
-      githubRef !== "dev" &&
-      githubRef !== "master" &&
-      githubRef !== "pre-prod" &&
-      githubRef !== "master-ipad"
+      trelloGithubBranch !== "dev" &&
+      trelloGithubBranch !== "master" &&
+      trelloGithubBranch !== "pre-prod" &&
+      trelloGithubBranch !== "master-ipad"
     ) {
       await moveCardToList(trelloBoardId, card, trelloListNameCommit);
     } else if (
       trelloListNameCommit &&
       trelloListNameCommit.length > 0 &&
-      githubRef === "dev"
+      trelloGithubBranch === "dev"
     ) {
       await moveCardToList(
         trelloBoardId,
