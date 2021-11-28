@@ -199,8 +199,25 @@ async function handleHeadCommit(data) {
         card,
         trelloListNamePullRequestClosed
       );
-    } else if (trelloListNameCommit && trelloListNameCommit.length > 0) {
+    } else if (
+      trelloListNameCommit &&
+      trelloListNameCommit.length > 0 &&
+      githubRef !== "dev" &&
+      githubRef !== "master" &&
+      githubRef !== "pre-prod" &&
+      githubRef !== "master-ipad"
+    ) {
       await moveCardToList(trelloBoardId, card, trelloListNameCommit);
+    } else if (
+      trelloListNameCommit &&
+      trelloListNameCommit.length > 0 &&
+      githubRef === "dev"
+    ) {
+      await moveCardToList(
+        trelloBoardId,
+        card,
+        trelloListNamePullRequestClosed
+      );
     }
   }
 }
