@@ -3,13 +3,14 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 
 const { context = {} } = github;
-const { pull_request, head_commit } = context.payload;
+let { pull_request, head_commit } = context.payload;
 
 const regexPullRequest = /Merge pull request \#\d+ from/g;
 const trelloApiKey = core.getInput("trello-api-key", { required: true });
 const trelloAuthToken = core.getInput("trello-auth-token", { required: true });
 const trelloBoardId = core.getInput("trello-board-id", { required: true });
-
+const githubRef = core.getInput("trello-github-branch", { required: true });
+console.log("GITHUB REF", githubRef);
 const trelloCardAction = core.getInput("trello-card-action", {
   required: true,
 });
@@ -25,6 +26,15 @@ const trelloListNamePullRequestClosed = core.getInput(
   "trello-list-name-pr-closed",
   { required: false }
 );
+
+// const trelloBoardId = "6155f330c33c1487e8e44b88";
+// const trelloApiKey = "f9a66a680f73c64a84a369ff855bc65b";
+// const trelloAuthToken =
+//   "84ff85e4075a422e347ae8e1acc995b09a529801594343d4ff1815b1a3ae1988";
+// const trelloCardAction = "Attachment";
+// const trelloListNameCommit = "AcknowledgedBugs";
+// const trelloListNamePullRequestOpen = "InProgress";
+// const trelloListNamePullRequestClosed = "Testing";
 
 function getCardNumber(message) {
   console.log(`getCardNumber`, message);
@@ -163,6 +173,11 @@ async function handleHeadCommit(data) {
   let message = data.message;
   let user = data.author.name;
   let card = await getCardOnBoard(trelloBoardId, message);
+  console.log(
+    "trelloListNamePullRequestClosed",
+    trelloListNamePullRequestClosed
+  );
+  console.log("trelloCardAction", message, trelloCardAction, regexPullRequest);
   if (card && card.length > 0) {
     if (trelloCardAction && trelloCardAction.toLowerCase() == "attachment") {
       console.log("Add Attachment -> New");
@@ -173,6 +188,7 @@ async function handleHeadCommit(data) {
     ) {
       await addCommentToCard(card, user, message, url);
     }
+
     if (
       message.match(regexPullRequest) &&
       trelloListNamePullRequestClosed &&
@@ -206,7 +222,7 @@ async function handlePullRequest(data) {
     ) {
       await addCommentToCard(card, user, message, url);
     }
-    console.log("DATA", data);
+    console.log("DATA", data.state, trelloListNamePullRequestOpen);
     if (
       data.state == "open" &&
       trelloListNamePullRequestOpen &&
@@ -229,8 +245,12 @@ async function handlePullRequest(data) {
 
 async function run() {
   if (head_commit && head_commit.message) {
+    console.log("commit", head_commit, head_commit.message);
+
     handleHeadCommit(head_commit);
   } else if (pull_request && pull_request.title) {
+    console.log("pr", pull_request, pull_request.message);
+
     handlePullRequest(pull_request);
   }
 }

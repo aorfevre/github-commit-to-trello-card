@@ -8726,28 +8726,37 @@ __nccwpck_require__.r(__webpack_exports__);
 
 
 const { context = {} } = _actions_github__WEBPACK_IMPORTED_MODULE_2__;
-const { pull_request, head_commit } = context.payload;
+let { pull_request, head_commit } = context.payload;
 
 const regexPullRequest = /Merge pull request \#\d+ from/g;
-const trelloApiKey = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("trello-api-key", { required: true });
-const trelloAuthToken = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("trello-auth-token", { required: true });
-const trelloBoardId = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("trello-board-id", { required: true });
+// const trelloApiKey = core.getInput("trello-api-key", { required: true });
+// const trelloAuthToken = core.getInput("trello-auth-token", { required: true });
+// const trelloBoardId = core.getInput("trello-board-id", { required: true });
 
-const trelloCardAction = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("trello-card-action", {
-  required: true,
-});
+// const trelloCardAction = core.getInput("trello-card-action", {
+//   required: true,
+// });
+//
+// const trelloListNameCommit = core.getInput("trello-list-name-commit", {
+//   required: true,
+// });
+// const trelloListNamePullRequestOpen = core.getInput(
+//   "trello-list-name-pr-open",
+//   { required: false }
+// );
+// const trelloListNamePullRequestClosed = core.getInput(
+//   "trello-list-name-pr-closed",
+//   { required: false }
+// );
 
-const trelloListNameCommit = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("trello-list-name-commit", {
-  required: true,
-});
-const trelloListNamePullRequestOpen = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput(
-  "trello-list-name-pr-open",
-  { required: false }
-);
-const trelloListNamePullRequestClosed = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput(
-  "trello-list-name-pr-closed",
-  { required: false }
-);
+const trelloBoardId = "6155f330c33c1487e8e44b88";
+const trelloApiKey = "f9a66a680f73c64a84a369ff855bc65b";
+const trelloAuthToken =
+  "84ff85e4075a422e347ae8e1acc995b09a529801594343d4ff1815b1a3ae1988";
+const trelloCardAction = "Attachment";
+const trelloListNameCommit = "AcknowledgedBugs";
+const trelloListNamePullRequestOpen = "InProgress";
+const trelloListNamePullRequestClosed = "Testing";
 
 function getCardNumber(message) {
   console.log(`getCardNumber`, message);
@@ -8881,6 +8890,11 @@ async function handleHeadCommit(data) {
   let message = data.message;
   let user = data.author.name;
   let card = await getCardOnBoard(trelloBoardId, message);
+  console.log(
+    "trelloListNamePullRequestClosed",
+    trelloListNamePullRequestClosed
+  );
+  console.log("trelloCardAction", message, trelloCardAction, regexPullRequest);
   if (card && card.length > 0) {
     if (trelloCardAction && trelloCardAction.toLowerCase() == "attachment") {
       console.log("Add Attachment -> New");
@@ -8891,6 +8905,7 @@ async function handleHeadCommit(data) {
     ) {
       await addCommentToCard(card, user, message, url);
     }
+
     if (
       message.match(regexPullRequest) &&
       trelloListNamePullRequestClosed &&
@@ -8924,7 +8939,7 @@ async function handlePullRequest(data) {
     ) {
       await addCommentToCard(card, user, message, url);
     }
-    console.log("DATA", data);
+    console.log("DATA", data.state, trelloListNamePullRequestOpen);
     if (
       data.state == "open" &&
       trelloListNamePullRequestOpen &&
@@ -8946,9 +8961,35 @@ async function handlePullRequest(data) {
 }
 
 async function run() {
+  head_commit = {
+    author: {
+      email: "Sudhanmanoharan@gmail.com",
+      name: "Sudhan",
+      username: "Sudhanmanoharan",
+    },
+    committer: {
+      email: "aorfevre@gmail.com",
+      name: "Alex",
+      username: "aorfevre",
+    },
+    distinct: true,
+    id: "ddd3c683de0134c771516ff572b2c89f75f3fd2b",
+    message:
+      "Remove  completely Privacy Policy #159\n" +
+      "\n" +
+      "Ticket : https://trello.com/c/5JxfNHOc/159-remove-completly-privacy-policy",
+    timestamp: "2021-11-24T13:47:27+01:00",
+    tree_id: "4adc526bc69b24f7649d82c800b36d46ae6315de",
+    url:
+      "https://github.com/daomaker/dao-platform/commit/ddd3c683de0134c771516ff572b2c89f75f3fd2b",
+  };
   if (head_commit && head_commit.message) {
+    console.log("commit", head_commit, head_commit.message);
+
     handleHeadCommit(head_commit);
   } else if (pull_request && pull_request.title) {
+    console.log("pr", pull_request, pull_request.message);
+
     handlePullRequest(pull_request);
   }
 }
